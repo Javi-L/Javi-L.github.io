@@ -4,12 +4,7 @@
 }
 
 body {
-  
-  /* background-repeat: no-repeat; */
-  /* background-color: rgb(123, 209, 212); */
-  /* background-color: rgb(86, 174, 233); */
-  background-color: rgb(3, 26, 41);
-  /* background-image: url("../images/background1.jpg"); */
+    background-color: rgb(3, 26, 41);
 }
 
 #canvas {
