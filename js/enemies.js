@@ -188,14 +188,14 @@ this.vy = 2.5;
       this.vy *= -1;
     }
 
-   if (this.x + this.vx > this.maxX - 300) {
+   if (this.x + this.vx > this.maxX - 100) {
        this.vx *= -1;
        this.img = new Image();
        this.img.src = 'images/squid-2b.png';
        this.img.frames = 1;
     }
     
-     else if (this.x + this.vx < 300) {
+     else if (this.x + this.vx < 100) {
       this.vx *= -1;
       this.img = new Image();
       this.img.src = 'images/squid-2.png';
