@@ -6,7 +6,6 @@ function Game(canvasId) {
   this.counter = 0;
   this.countDown = 1800;
   this.sumCountDown = 0;
-  // this.actualCountDown = this.countDown + this.sumCountDown;
   this.reset();
   }
 
@@ -26,7 +25,6 @@ Game.prototype.start = function() {
     switch (this.time) {
 
       case 10:
-      
       this.createNewPearls();
       this.createNewTreasure();
       break;
@@ -56,6 +54,7 @@ Game.prototype.start = function() {
       case 2500:
 
       this.createNewSquid2();
+      this.createLifeUp();
       break;
 
       case 8000:
@@ -66,6 +65,7 @@ Game.prototype.start = function() {
       case 10000:
 
       this.createNewTreasure();
+      this.createLifeUp();
       break;
 
       default:
@@ -77,6 +77,10 @@ Game.prototype.start = function() {
     this.draw();
     this.oxigenLevel();
     this.playerWin();
+
+    if (this.time > 15000 && this.counter % 7200 === 0) {
+      this.createLifeUp();
+    }
 
     if (this.player.health <= 0 /* || this.pearls.length > 20 */) {
 
@@ -96,6 +100,7 @@ Game.prototype.reset = function() {
   this.pearls = [];
   this.treasures = [];
   this.oxigenBottles = [];
+  this.lifeUps = [];
   this.createNewShark();
   this.createNewSquid();
   this.createNewShark2();
@@ -147,6 +152,12 @@ Game.prototype.createNewOxigenBottle = function() {
   this.oxigenBottles.push(new OxigenBottle(this));
 };
 
+Game.prototype.createLifeUp = function() {
+ 
+  this.lifeUps.push(new LifeUp(this));
+  
+};
+
 };
 
 Game.prototype.clear = function() {
@@ -167,6 +178,7 @@ Game.prototype.draw = function() {
   this.pearls.forEach(function(pearls) { pearls.draw(); });
   this.treasures.forEach(function(treasures) { treasures.draw(); });
   this.oxigenBottles.forEach(function(oxigenBottles) { oxigenBottles.draw(); });
+  this.lifeUps.forEach(function(lifeUps) { lifeUps.draw(); });
 };
 
 Game.prototype.move = function() {
@@ -187,8 +199,7 @@ Game.prototype.move = function() {
       this.ctx.fillRect (this.x, this.y, this.width, this.height);
       this.ctx.restore();
       this.ctx.fillRect(this.x, this.y, this.width, this.height);
-      // console.log(this.player.health);
-     
+          
     }
       
   }.bind(this));
@@ -204,8 +215,7 @@ Game.prototype.move = function() {
       this.ctx.fillRect (this.x, this.y, this.width, this.height);
       this.ctx.restore();
       this.ctx.fillRect(this.x, this.y, this.width, this.height);
-      // console.log(this.player.health);
-      
+           
     } 
       
   }.bind(this));
@@ -221,8 +231,7 @@ Game.prototype.move = function() {
       this.ctx.fillRect (this.x, this.y, this.width, this.height);
       this.ctx.restore();
       this.ctx.fillRect(this.x, this.y, this.width, this.height);
-      // console.log(this.player.health);
-      
+        
     } 
       
   }.bind(this));
@@ -238,8 +247,7 @@ Game.prototype.move = function() {
       this.ctx.fillRect (this.x, this.y, this.width, this.height);
       this.ctx.restore();
       this.ctx.fillRect(this.x, this.y, this.width, this.height);
-      // console.log(this.player.health);
-      
+       
     }
       
   }.bind(this));
@@ -282,6 +290,36 @@ Game.prototype.move = function() {
     } 
       
   }.bind(this));
+
+  this.lifeUps.forEach(function(lifeUp) {
+
+    this.lifeUpIndex = this.lifeUps.indexOf(lifeUp, 0);
+
+
+    if (this.collectItems(lifeUp) === true && this.player.health < 245) {
+
+      this.player.health += 100;
+      this.player.width = this.player.health;
+      this.ctx.clearRect (12, 12, 346, 21);
+      this.ctx.fillStyle = '#1DC8B8'; 
+      this.ctx.fillRect (this.x, this.y, this.width, this.height);
+      this.ctx.restore();
+      this.ctx.fillRect(this.x, this.y, this.width, this.height);
+      this.lifeUps.splice(this.lifeUpIndex, 1);
+      
+    } else if (this.collectItems(lifeUp) === true && this.player.health > 245) {
+
+      this.player.health = 346;
+      this.player.width = this.player.health;
+      this.ctx.clearRect (12, 12, 346, 21);
+      this.ctx.fillStyle = '#1DC8B8'; 
+      this.ctx.fillRect (this.x, this.y, this.width, this.height);
+      this.ctx.restore();
+      this.ctx.fillRect(this.x, this.y, this.width, this.height);
+      this.lifeUps.splice(this.lifeUpIndex, 1);
+    }
+      
+  }.bind(this));
  
 };
 
@@ -315,8 +353,6 @@ Game.prototype.collectItems = function (e) {
     
     return true;
 
-  } else {
-    return false;
   }
 
 };
@@ -343,20 +379,13 @@ Game.prototype.collectItems = function (e) {
 
   Game.prototype.drawOxigenLevel = function() {
     this.actualCountDown = this.countDown + this.sumCountDown;
-    this.minutes = this.actualCountDown / 60;
-
-
-    this.ctx.arc(50,70,25,0,(Math.PI/180)*360,true);
-    this.ctx.fillStyle= '#1DC8B8';
-    this.ctx.fill();
-    this.ctx.strokeStyle = "#1C6177";
-    this.ctx.lineWidth = 1;
-    this.ctx.stroke();
-
-    this.ctx.font = "bold 30px Orbitron";
-    this.ctx.textAlign = "start";
-    this.ctx.fillStyle = "yellow";
-    this.ctx.fillText(Math.floor(this.minutes), 36, 80);
+    this.seconds = this.actualCountDown / 60;
+    
+    this.ctx.font = 'bold 40px Orbitron';
+    this.ctx.textAlign = 'start';
+    this.ctx.fillStyle = 'rgb(23, 160, 41)';
+    this.ctx.fillText(Math.floor(this.seconds), 36, 80);
+    this.ctx.fillStyle = 'rgb(23, 160, 41)';
 
     if (this.player.y < 145) {
       this.countDown = 1860;
